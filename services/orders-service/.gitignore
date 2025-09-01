@@ -1,0 +1,18 @@
+# Згенеровані файли збірки
+/target/
+
+# Лог-файли
+*.log
+hs_err_pid*
+
+# Файли IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Файли VS Code
+.vscode/
