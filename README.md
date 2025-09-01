@@ -1,5 +1,10 @@
 # Мікросервісна архітектура ресторану
 
+## Docker
+``` bash
+docker-compose --project-directory . -f infrastructure/docker/docker-compose.yml up --build
+```
+
 ## Технічна специфікація проекту
 
 ### Огляд проекту

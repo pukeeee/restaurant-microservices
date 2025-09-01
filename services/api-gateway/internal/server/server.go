@@ -11,7 +11,7 @@ import (
 // Run запускає веб-сервер.
 func Run() {
 	// Адреса нашого сервісу замовлень
-	orderServiceURL, err := url.Parse("http://localhost:8081")
+	orderServiceURL, err := url.Parse("http://orders-service:8081")
 	if err != nil {
 		log.Fatalf("Не вдалося розпарсити URL сервісу замовлень: %v", err)
 	}

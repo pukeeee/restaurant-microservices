@@ -1,0 +1,34 @@
+# Визначаємо мережу, в якій будуть працювати наші сервіси
+# Це дозволить їм звертатися один до одного за іменами (напр., http://api-gateway:8080)
+networks:
+  restaurant-net:
+    driver: bridge
+
+# Описуємо наші сервіси
+services:
+
+  # Сервіс API-шлюзу
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      # Шлях до Dockerfile відносно директорії context
+      dockerfile: ../../infrastructure/docker/api-gateway.Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - restaurant-net
+
+  # Сервіс замовлень
+  orders-service:
+    build:
+      context: ./services/orders-service
+      # Шлях до Dockerfile відносно директорії context
+      dockerfile: ../../infrastructure/docker/orders-service.Dockerfile
+    container_name: orders-service
+    ports:
+      - "8081:8081"
+    networks:
+      - restaurant-net
+    depends_on:
+      - api-gateway
