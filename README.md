@@ -2,7 +2,7 @@
 
 ## Docker
 ``` bash
-docker-compose --project-directory . -f infrastructure/docker/docker-compose.yml up --build
+docker-compose --project-directory . -f infrastructure/docker/docker-compose.yml up --build -d
 ```
 
 ## Технічна специфікація проекту

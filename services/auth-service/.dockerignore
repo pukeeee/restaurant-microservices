@@ -1,0 +1,15 @@
+# Ігноруємо віртуальне середовище Python
+.venv
+
+# Ігноруємо кеш Python
+__pycache__/
+*.pyc
+
+# Ігноруємо файли IDE та системні файли
+.idea/
+.vscode/
+.DS_Store
+
+# Ігноруємо файли git
+.git
+.gitignore

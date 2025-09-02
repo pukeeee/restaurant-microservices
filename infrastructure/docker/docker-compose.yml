@@ -30,5 +30,25 @@ services:
       - "8081:8081"
     networks:
       - restaurant-net
-    depends_on:
-      - api-gateway
+    
+
+  # Сервіс автентифікації
+  auth-service:
+    build:
+      context: ./services/auth-service
+      # Dockerfile для auth-service знаходиться прямо в його директорії
+      dockerfile: ../../infrastructure/docker/auth-service.Dockerfile
+    container_name: auth-service
+    # Ми не "виставляємо" (expose) порт назовні (на хост-машину),
+    # оскільки доступ до цього сервісу має йти виключно через API Gateway.
+    # Docker Compose все одно зробить порт 8000 доступним для інших контейнерів у тій же мережі.
+    ports:
+      - "8000"
+    networks:
+      - restaurant-net
+    # Створюємо "живий зв'язок" між папкою на вашому комп'ютері та папкою в контейнері
+    volumes:
+      - ./services/auth-service:/app
+    # Змінюємо команду запуску, додаючи прапорець --reload
+    # Тепер сервер uvicorn буде автоматично перезавантажуватися при змінах у коді
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
