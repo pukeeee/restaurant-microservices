@@ -31,4 +31,15 @@ public class OrderService {
             new Order(2, "Цезар з куркою")
         );
     }
+
+    /**
+     * Метод для пошуку страви за її унікальним ідентифікатором (ID).
+     * @param id ідентифікатор страви для пошуку.
+     * @return Optional, що містить знайдене замовлення, або порожній Optional.
+     */
+    public java.util.Optional<Order> findDishById(Integer id) {
+        return findAll().stream()
+                .filter(order -> order.id().equals(id))
+                .findFirst();
+    }
 }
