@@ -38,11 +38,13 @@ services:
       # Dockerfile для auth-service знаходиться прямо в його директорії
       dockerfile: ../../infrastructure/docker/auth-service.Dockerfile
     container_name: auth-service
-    # Ми не "виставляємо" (expose) порт назовні (на хост-машину),
-    # оскільки доступ до цього сервісу має йти виключно через API Gateway.
-    # Docker Compose все одно зробить порт 8000 доступним для інших контейнерів у тій же мережі.
+    environment:                                                                                                   
+      - DATABASE_URL=postgresql+asyncpg://auth_user:auth_pass@auth-db:5432/auth_db
+      - JWT_SECRET_KEY=your_super_secret_key
+      - JWT_ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
     ports:
-      - "8000"
+      - "8000:8000"
     networks:
       - restaurant-net
     # Створюємо "живий зв'язок" між папкою на вашому комп'ютері та папкою в контейнері
@@ -50,7 +52,30 @@ services:
       - ./services/auth-service:/app
     # Змінюємо команду запуску, додаючи прапорець --reload
     # Тепер сервер uvicorn буде автоматично перезавантажуватися при змінах у коді
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      auth-db:
+        condition: service_healthy
+  
+  # База даних для сервісу автентифікації
+  auth-db:
+    image: postgres:15-alpine
+    container_name: auth-db
+    environment:
+      - POSTGRES_DB=auth_db
+      - POSTGRES_USER=auth_user
+      - POSTGRES_PASSWORD=auth_pass
+    ports:
+      - "5439:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - restaurant-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Сервіс користувачів
   user-service:
@@ -69,3 +94,7 @@ services:
       # Цей трюк запобігає перезаписуванню node_modules контейнера
       # локальною папкою node_modules, що важливо для сумісності
       - /usr/src/app/node_modules
+
+# Створюємо іменований volume для зберігання даних бази auth-db                                                     
+volumes:                                                                                                            
+  auth-db-data:

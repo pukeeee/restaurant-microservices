@@ -1,2 +1,13 @@
-fastapi
+fastapi>=0.100.0
 uvicorn[standard]
+
+# Pydantic та налаштування
+pydantic>=2.0
+pydantic-settings
+
+# Для роботи з базою даних (асинхронний режим)
+SQLAlchemy[asyncio]>=2.0
+asyncpg
+
+# Для генерації JWT (активно підтримувана бібліотека)
+PyJWT
