@@ -83,6 +83,9 @@ services:
       context: ./services/user-service
       dockerfile: ../../infrastructure/docker/user-service.Dockerfile
     container_name: user-service
+    environment:
+      - MONGO_URL=mongodb://user-db:27017
+      - DB_NAME=user_db
     ports:
       - "3002:3002"
     networks:
@@ -94,7 +97,21 @@ services:
       # Цей трюк запобігає перезаписуванню node_modules контейнера
       # локальною папкою node_modules, що важливо для сумісності
       - /usr/src/app/node_modules
+    depends_on:
+      - user-db
 
-# Створюємо іменований volume для зберігання даних бази auth-db                                                     
-volumes:                                                                                                            
+  # База даних для сервісу користувачів
+  user-db:
+    image: mongo:latest
+    container_name: user-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - user-db-data:/data/db
+    networks:
+      - restaurant-net
+
+# Створюємо іменовані volume для зберігання даних баз
+volumes:
   auth-db-data:
+  user-db-data:
