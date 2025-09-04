@@ -5,6 +5,37 @@
 docker-compose --project-directory . -f infrastructure/docker/docker-compose.yml up --build -d
 ```
 
+### Корисні команди для налагодження
+
+Після запуску контейнерів ви можете підключатися до баз даних для перевірки стану.
+
+#### Order Service (PostgreSQL)
+
+```bash
+# Переглянути всі позиції меню
+echo "SELECT * FROM menu_items;" | docker exec -i orders-db psql -U orders_user -d orders-db
+
+# Переглянути всі замовлення
+echo "SELECT * FROM orders;" | docker exec -i orders-db psql -U orders_user -d orders-db
+
+# Переглянути всі позиції в замовленнях
+echo "SELECT * FROM order_items;" | docker exec -i orders-db psql -U orders_user -d orders-db
+```
+
+#### Auth Service (PostgreSQL)
+
+```bash
+echo "SELECT * FROM users" | docker exec -i auth-db psql -U auth_user -d auth_db
+```
+
+#### User Service (MongoDB)
+
+```bash
+# Переглянути всі колекції в базі даних сервісу користувачів
+docker exec -i user-db mongosh --eval "use user_db; db.getCollectionNames()"
+```
+
+
 ## Технічна специфікація проекту
 
 ### Огляд проекту

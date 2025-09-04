@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     """
     Клас для зберігання всіх налаштувань додатку.
     """
-    DATABASE_URL: str = "postgresql+asyncpg://default:password@localhost:5439/auth_db"
+    DATABASE_URL: str = "postgresql+asyncpg://default:password@localhost:5439/auth-db"
     JWT_SECRET_KEY: str = "your_super_secret_key"  # Секретний ключ для підпису JWT
     JWT_ALGORITHM: str = "HS256"                   # Алгоритм шифрування
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30          # Час життя токена доступу
@@ -168,7 +168,7 @@ async def login_for_access_token(form_data: UserLoginRequest, db: AsyncSession =
                 detail="Поле 'name' є обов\'язковим при реєстрації нового користувача."
             )
 
-        # 1. Створюємо запис в локальній базі `auth_db`
+        # 1. Створюємо запис в локальній базі `auth-db`
         new_user = User(phone_number=form_data.phoneNumber)
         db.add(new_user)
         await db.commit()

@@ -26,10 +26,37 @@ services:
       # Шлях до Dockerfile відносно директорії context
       dockerfile: ../../infrastructure/docker/orders-service.Dockerfile
     container_name: orders-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://orders-db:5432/orders-db
+      - SPRING_DATASOURCE_USERNAME=orders_user
+      - SPRING_DATASOURCE_PASSWORD=orders_pass
     ports:
       - "8081:8081"
     networks:
       - restaurant-net
+    depends_on:
+      orders-db:
+        condition: service_healthy
+
+  # База даних для сервісу замовлень
+  orders-db:
+    image: postgres:15-alpine
+    container_name: orders-db
+    environment:
+      - POSTGRES_DB=orders-db
+      - POSTGRES_USER=orders_user
+      - POSTGRES_PASSWORD=orders_pass
+    ports:
+      - "5440:5432"
+    volumes:
+      - orders-db-data:/var/lib/postgresql/data
+    networks:
+      - restaurant-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orders_user -d orders-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Сервіс автентифікації
   auth-service:
@@ -39,7 +66,7 @@ services:
       dockerfile: ../../infrastructure/docker/auth-service.Dockerfile
     container_name: auth-service
     environment:                                                                                                   
-      - DATABASE_URL=postgresql+asyncpg://auth_user:auth_pass@auth-db:5432/auth_db
+      - DATABASE_URL=postgresql+asyncpg://auth_user:auth_pass@auth-db:5432/auth-db
       - JWT_SECRET_KEY=your_super_secret_key
       - JWT_ALGORITHM=HS256
       - ACCESS_TOKEN_EXPIRE_MINUTES=30
@@ -62,7 +89,7 @@ services:
     image: postgres:15-alpine
     container_name: auth-db
     environment:
-      - POSTGRES_DB=auth_db
+      - POSTGRES_DB=auth-db
       - POSTGRES_USER=auth_user
       - POSTGRES_PASSWORD=auth_pass
     ports:
@@ -72,7 +99,7 @@ services:
     networks:
       - restaurant-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth-db"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -115,3 +142,4 @@ services:
 volumes:
   auth-db-data:
   user-db-data:
+  orders-db-data:
