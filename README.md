@@ -13,26 +13,25 @@ docker-compose --project-directory . -f infrastructure/docker/docker-compose.yml
 
 ```bash
 # Переглянути всі позиції меню
-echo "SELECT * FROM menu_items;" | docker exec -i orders-db psql -U orders_user -d orders-db
+docker exec orders-db psql -U orders_user -d orders-db -c "SELECT * FROM menu_items;"
 
 # Переглянути всі замовлення
-echo "SELECT * FROM orders;" | docker exec -i orders-db psql -U orders_user -d orders-db
+docker exec orders-db psql -U orders_user -d orders-db -c "SELECT * FROM orders;"
 
 # Переглянути всі позиції в замовленнях
-echo "SELECT * FROM order_items;" | docker exec -i orders-db psql -U orders_user -d orders-db
+docker exec orders-db psql -U orders_user -d orders-db -c "SELECT * FROM order_items;"
 ```
 
 #### Auth Service (PostgreSQL)
 
 ```bash
-echo "SELECT * FROM users" | docker exec -i auth-db psql -U auth_user -d auth_db
+docker exec auth-db psql -U auth_user -d auth-db -c "SELECT * FROM users;"
 ```
 
 #### User Service (MongoDB)
 
 ```bash
-# Переглянути всі колекції в базі даних сервісу користувачів
-docker exec -i user-db mongosh --eval "use user_db; db.getCollectionNames()"
+docker exec user-db mongosh --eval "db.getSiblingDB('user_db').users.find({})"
 ```
 
 

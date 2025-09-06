@@ -1,7 +1,7 @@
 package com.restaurant.orderservice.dto;
 
-import lombok.Data;
 import java.util.List;
+import lombok.Data;
 
 /**
  * Data Transfer Object (DTO) для запиту на створення нового замовлення.

@@ -10,7 +10,7 @@ Auth Service
 
 # --- 1. Імпорти (Imports) ---
 # Стандартні бібліотеки
-import os
+# import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from contextlib import asynccontextmanager
@@ -22,8 +22,8 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 from sqlalchemy import BigInteger, String, select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # --- 2. Налаштування (Configuration) ---
 # Використовуємо Pydantic's BaseSettings для керування налаштуваннями.
@@ -50,7 +50,7 @@ settings = Settings()
 engine = create_async_engine(settings.DATABASE_URL)
 
 # Створюємо фабрику сесій для створення нових асинхронних сесій з БД.
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 # Базовий клас для всіх моделей SQLAlchemy.
 class Base(DeclarativeBase):
@@ -177,7 +177,7 @@ async def login_for_access_token(form_data: UserLoginRequest, db: AsyncSession =
         print(f"Створено нового користувача в auth-db з ID: {user.id}")
 
         # 2. Викликаємо `user-service` для створення профілю користувача
-        print(f"Виклик user-service для створення профілю...")
+        print("Виклик user-service для створення профілю...")
         user_profile_data = {
             "authId": str(user.id),
             "phone": user.phone_number,
@@ -210,4 +210,4 @@ async def login_for_access_token(form_data: UserLoginRequest, db: AsyncSession =
     )
 
     # Повертаємо токен клієнту
-    return {"access_token": access_token, "token_type": "bearer"} 
+    return {"access_token": access_token, "token_type": "bearer"}
